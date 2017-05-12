@@ -1,0 +1,41 @@
+[ENABLE]
+aobscanmodule(INJECT_iniConverter,FIFA17.exe,05 8B 58 08 EB 02) // should be unique
+alloc(cave_iniConverter,$1000,"FIFA17.exe"+7B06465)
+
+label(code_iniConverter)
+label(ret_iniConverter)
+label(exit)
+
+
+cave_iniConverter:
+PUSHF
+PUSH RSI
+PUSH RDI
+PUSH RCX
+jmp code_iniConverter
+
+
+code_iniConverter:
+  mov ebx,[rax+08]
+  jmp exit
+
+
+exit:
+  POP RCX
+  POP RDI
+  POP RSI
+  POPF
+  jmp INJECT_iniConverter+08
+
+INJECT_iniConverter+01:
+  jmp cave_iniConverter
+ret_iniConverter:
+registersymbol(INJECT_iniConverter)
+
+[DISABLE]
+//code_iniConverter from here till the end of the code_iniConverter will be used to disable the cheat
+INJECT_iniConverter+01:
+  db 8B 58 08 EB 02
+
+unregistersymbol(INJECT_iniConverter)
+dealloc(cave_iniConverter)
