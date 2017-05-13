@@ -1,6 +1,6 @@
 [ENABLE]
 aobscanmodule(INJECT_iniConverter,FIFA17.exe,05 8B 58 08 EB 02) // should be unique
-alloc(cave_iniConverter,$1000,"FIFA17.exe"+7B06465)
+alloc(cave_iniConverter,$220000,"FIFA17.exe"+77666D5)
 
 label(code_iniConverter)
 label(ret_iniConverter)

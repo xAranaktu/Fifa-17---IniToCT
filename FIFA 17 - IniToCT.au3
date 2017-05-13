@@ -164,6 +164,7 @@ Func Start()
 		MsgBox(48, "", "Unknown error")
 	EndIf
 
+	Dim $arrSections[0], $arrValues[0] ; cleaning arrays
 	$selectedItems = 0
 	$countChanges = 0
 	GUICtrlSetState($Progress1, $GUI_HIDE)
@@ -305,7 +306,7 @@ Func CompareIni($iniName)
 		$lastChar = StringRight($arrOriginalFile[$i], 1)
 		If $firstChar == "[" Then
 			$Section = _StringBetween($arrOriginalFile[$i], "[", "]")[0] ; Remove '[' and ']' from section name because we don't need it.
-		ElseIf $firstChar == "//" Or StringIsSpace($firstChar) Then
+		ElseIf $firstChar == "/" Or StringIsSpace($firstChar) Then
 			ContinueLoop ; Skip empty and comment lines
 		EndIf
 
