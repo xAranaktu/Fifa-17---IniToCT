@@ -1,7 +1,7 @@
 #Region ;**** Directives created by AutoIt3Wrapper_GUI ****
 #AutoIt3Wrapper_Outfile=IniToCT 17.Exe
 #AutoIt3Wrapper_UseX64=n
-#AutoIt3Wrapper_Res_Fileversion=1.0
+#AutoIt3Wrapper_Res_Fileversion=1.2
 #EndRegion ;**** Directives created by AutoIt3Wrapper_GUI ****
 #include <array.au3>
 #include <File.au3>
@@ -216,26 +216,30 @@ Func CreateScript()
 	Dim $arrTemplate
 	_FileReadToArray($fScriptTemplate, $arrTemplate, 0)
 	For $i = 0 To UBound($arrSections) - 1
-		_ArrayInsert($arrTemplate, 21, "str" & $i & ":") ; Create label for string to be compared
-		_ArrayInsert($arrTemplate, 22, "db " & "'" & $arrSections[$i] & "', 0") ; Our string
+		_ArrayInsert($arrTemplate, 33, "str" & $i & ":") ; Create label for string to be compared
+		_ArrayInsert($arrTemplate, 34, "  db " & "'" & $arrSections[$i] & "', 0") ; Our string
 	Next
 
 	For $i = 0 To UBound($arrSections) - 1
-		_ArrayInsert($arrTemplate, 16, "label_str" & $i & ":") ;
-		_ArrayInsert($arrTemplate, 17, "mov [rax+08]," & IntOrFloat($arrValues[$i])) ; Here we mov our changed value into [rax+08]
-		_ArrayInsert($arrTemplate, 18, "jmp code_iniConverter") ; jump to original code, because job is done
+		_ArrayInsert($arrTemplate, 32, "label_str" & $i & ":") ;
+		_ArrayInsert($arrTemplate, 33, "  mov rsi, [ptrVal]") ;
+		_ArrayInsert($arrTemplate, 34, "  mov [rsi+08]," & IntOrFloat($arrValues[$i])) ; Here we mov our changed value into [rax+08]
+		_ArrayInsert($arrTemplate, 35, "  jmp exit") ;
 	Next
 
 	For $i = 0 To UBound($arrSections) - 1
-		_ArrayInsert($arrTemplate, 14, "mov rcx, #" & StringLen($arrSections[$i]))
-		_ArrayInsert($arrTemplate, 15, "mov rsi, str" & $i)
-		_ArrayInsert($arrTemplate, 16, "mov rdi, rbx")
-		_ArrayInsert($arrTemplate, 17, "rep cmpsb")
-		_ArrayInsert($arrTemplate, 18, "je label_str" & $i)
+		_ArrayInsert($arrTemplate, 30, "  mov [saveRDX], rdx")
+		_ArrayInsert($arrTemplate, 31, "  mov rcx, #" & StringLen($arrSections[$i]))
+		_ArrayInsert($arrTemplate, 32, "  sub [saveRDX], rcx")
+		_ArrayInsert($arrTemplate, 33, "  sub [saveRDX], 01")
+		_ArrayInsert($arrTemplate, 34, "  mov rsi, str" & $i)
+		_ArrayInsert($arrTemplate, 35, "  mov rdi, [saveRDX]")
+		_ArrayInsert($arrTemplate, 36, "  rep cmpsb")
+		_ArrayInsert($arrTemplate, 37, "  je label_str" & $i)
 	Next
 
 	For $i = 0 To UBound($arrSections) - 1
-		_ArrayInsert($arrTemplate, 8, "label(label_str" & $i & ")")
+		_ArrayInsert($arrTemplate, 7, "label(label_str" & $i & ")")
 	Next
 
 	If $outputCT = True Then
